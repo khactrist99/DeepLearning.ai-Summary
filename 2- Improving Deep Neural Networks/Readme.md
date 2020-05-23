@@ -660,11 +660,13 @@ Implications of L2-regularization on:
   - Then `Z_norm[i] = (z[i] - mean) / np.sqrt(variance + epsilon)` (add `epsilon` for numerical stability if variance = 0)
     - Forcing the inputs to a distribution with zero mean and variance of 1.
   - Then `Z_tilde[i] = gamma * Z_norm[i] + beta`
-    - To make inputs belong to other distribution (with other mean and variance).
-    - gamma and beta are learnable parameters of the model.
+    - Since we don't want the hidden units to always have mean 0 and variance 1. Therefore, in order for hidden units to have a different distribution (with other mean and variance), we compute `Z_tilde`.
+    - `gamma` and `beta` are learnable parameters of the model (can be updated during training like the weights of NN).
     - Making the NN learn the distribution of the outputs.
-    - _Note:_ if `gamma = sqrt(variance + epsilon)` and `beta = mean` then `Z_tilde[i] = z[i]`
-
+    - _Note:_ The effect of `gamma` and `beta` is it allows us to set the mean of `Z_tilde` to be whatever we want it to be. if `gamma = sqrt(variance + epsilon)` and `beta = mean` then we can invert `Z_tilde[i] = z[i]`.
+- Summary:
+  - What batch norm does is it applies normalization process not just to the input layer but to the values deep in some hidden layers of NN.
+  - An addition for batch norm is that we don't want the hidden unit values be forced to have mean 0 and variance 1. *(E.g, for sigmoid activation function, you don't want values to be clusterd near 0 <-- Because this is the "linear" part of sigmoid function)*
 ### Fitting Batch Normalization into a neural network
 
 - Using batch norm in 3 hidden layers NN:
