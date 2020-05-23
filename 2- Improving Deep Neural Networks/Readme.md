@@ -672,29 +672,39 @@ Implications of L2-regularization on:
 - Using batch norm in 3 hidden layers NN:
     ![](Images/bn.png)
 - Our NN parameters will be:
-  - `W[1]`, `b[1]`, ..., `W[L]`, `b[L]`, `beta[1]`, `gamma[1]`, ..., `beta[L]`, `gamma[L]`
+  - `W[1]`, `b[1]`, ..., `W[L]`, `b[L]` AND `beta[1]`, `gamma[1]`, ..., `beta[L]`, `gamma[L]`
+  - _Note_: This `beta` is different from the `beta` in momentum, RMSProp or Adam.
   - `beta[1]`, `gamma[1]`, ..., `beta[L]`, `gamma[L]` are updated using any optimization algorithms (like GD, RMSprop, Adam)
 - If you are using a deep learning framework, you won't have to implement batch norm yourself:
   - Ex. in Tensorflow you can add this line: `tf.nn.batch-normalization()`
-- Batch normalization is usually applied with mini-batches.
-- If we are using batch normalization parameters `b[1]`, ..., `b[L]` doesn't count because they will be eliminated after mean subtraction step, so:
+- In practice, batch normalization is usually applied with mini-batches.
+- If we are using batch normalization parameters `b[1]`, ..., `b[L]` doesn't count because any constant will be canceled by the mean subtraction step, so:
   ```
   Z[l] = W[l]A[l-1] + b[l] => Z[l] = W[l]A[l-1]
   Z_norm[l] = ...
   Z_tilde[l] = gamma[l] * Z_norm[l] + beta[l]
   ```
-  - Taking the mean of a constant `b[l]` will eliminate the `b[l]`
 - So if you are using batch normalization, you can remove b[l] or make it always zero.
 - So the parameters will be `W[l]`, `beta[l]`, and `alpha[l]`.
 - Shapes:
   - `Z[l]       - (n[l], m)`
   - `beta[l]    - (n[l], m)`
   - `gamma[l]   - (n[l], m)`
-
+- Implement with Gradient Descent (works with Momentum, RMSprop, Adam):
+  ```
+  For t=1 -> num_mini_batches:
+    Compute forward prop on X{t}
+      In each hidden layer, use BN to replace Z[l] with Ztilde[l]
+    Use backprop and computes dW[l], dbeta[l], dgamma[l]
+    Update params:
+        W[l] = W[l] - alpha * dW[l]
+        beta[l] = beta[l] - alpha * dbeta[l]
+        gamma[l] = gamma[l] - alpha * dgamma[l]
+  ```
 ### Why does Batch normalization work?
 
 - The first reason is the same reason as why we normalize X.
-- The second reason is that batch normalization reduces the problem of input values changing (shifting).
+- The second reason is that batch normalization reduces the problem of **Covariate Shifting** - input data changing (shifting).
 - Batch normalization does some regularization:
   - Each mini batch is scaled by the mean/variance computed of that mini-batch.
   - This adds some noise to the values `Z[l]` within that mini batch. So similar to dropout it adds some noise to each hidden layer's activations.
