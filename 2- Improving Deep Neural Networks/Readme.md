@@ -715,12 +715,13 @@ Implications of L2-regularization on:
 ### Batch normalization at test time
 
 - When we train a NN with Batch normalization, we compute the mean and the variance of the mini-batch.
-- In testing we might need to process examples one at a time. The mean and the variance of one example won't make sense.
-- We have to compute an estimated value of mean and variance to use it in testing time.
-- We can use the weighted average across the mini-batches.
-- We will use the estimated values of the mean and variance to test.
-- This method is also sometimes called "Running average".
-- In practice most often you will use a deep learning framework and it will contain some default implementation of doing such a thing.
+- In testing, we might need to process examples one at a time. The mean and the variance of one example won't make sense.
+- **Solution**:
+  - We have to compute an estimated value of mean and variance (in training time) to use it in testing time.
+  - We can use the weighted average of means and variances across the mini-batches in testing time.
+  - Then, we use the average mean and variance to calculate `Z_norm` and `Z_tilde`
+  - This method is also sometimes called "Running average".
+  - In practice most often you will use a deep learning framework and it will contain some default implementation of doing such a thing.
 
 ### Softmax Regression
 
