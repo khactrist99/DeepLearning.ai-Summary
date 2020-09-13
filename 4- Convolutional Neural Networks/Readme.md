@@ -274,7 +274,7 @@ Here is the course summary as given on the course [link](https://www.coursera.or
   - `Max pooling size = 2` and `stride = 2`
   - Output: `2x2x10`
 - Average pooling is taking the averages of the values instead of taking the max values.
-- Max pooling is used more often than average pooling in practice.
+- Max pooling is used more often than average pooling in practice. (use in very 
 - If stride of pooling equals the size, it will then apply the effect of shrinking.
 - Hyperparameters summary
   - f : filter size.
